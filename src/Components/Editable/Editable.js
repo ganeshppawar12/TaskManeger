@@ -1,0 +1,58 @@
+import React, { useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+// import { X } from "react-feather";
+
+import "./Editable.css";
+import { useSelector } from "react-redux";
+
+function Editable(props) {
+  const [isEditable, setIsEditable] = useState(false);
+  const [inputText, setInputText] = useState(props.defaultValue || "");
+
+  const submission = (e) => {
+    e.preventDefault();
+    if (inputText && props.onSubmit) {
+      setInputText("");
+      props.onSubmit(inputText);
+    }
+    setIsEditable(true);
+  };
+  const lightTheme = useSelector((state) => state.themeKey);
+
+  return (
+    <div className="editable">
+      {isEditable ? (
+        <form
+          className={`editable_edit ${props.editClass ? props.editClass : ""}`}
+          onSubmit={submission}
+        >
+          <input
+            type="text"
+            value={inputText}
+            placeholder={props.placeholder || props.text}
+            onChange={(event) => setInputText(event.target.value)}
+            autoFocus
+          />
+          <div className={"editable_edit_footer"}>
+            <button type="submit">{props.buttonText || "Add"}</button>
+            <CloseIcon
+              onClick={() => setIsEditable(false)}
+              className="closeIcon"
+            />
+          </div>
+        </form>
+      ) : (
+        <p
+          className={`editable_display ${
+            props.displayClass ? props.displayClass : ""
+          }`}
+          onClick={() => setIsEditable(true)}
+        >
+          {props.text}
+        </p>
+      )}
+    </div>
+  );
+}
+
+export default Editable;
